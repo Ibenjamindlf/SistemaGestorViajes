@@ -61,16 +61,17 @@ class Pasajero{
         $telefono = $this->getTelefono();
         $viaje = $this->getViaje();
 
-    return
+        return
             "---------- PASAJERO ----------\n".
             "Numero Documento: $numeroDocumento\n".
             "Nombre: $nombre \n".
             "Apellido: $apellido \n".
             "Telefono: $telefono \n".
-            "------- VIAJE -------".
-            $viaje
-        ;
-    }
+            "---------- VIAJE ----------\n".
+            "$viaje\n".
+            "-----------------------------"
+;
+}
 
 }
 ?>

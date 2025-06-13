@@ -86,14 +86,13 @@ class Viaje{
         $importe = $this->getImporte();
 
         return
-            "---------- VIAJE ----------\n".
             "------- RESPONSABLE -------".
-            $responsable.
+            "$responsable\n".
             "Número viaje: $numViaje\n".
             "Destino: $destino\n".
             "Cantidad máxima de pasajeros: $cantMaxPasajeros\n".
             "---------- EMPRESA ----------".
-            $empresa.
+            "$empresa\n".
             "Importe: $$importe";
         ;
     }

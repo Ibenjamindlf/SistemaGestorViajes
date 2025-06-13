@@ -1,61 +1,71 @@
 <?php
-/// Clase Responsable
+// Clase Responsable
 Class Responsable {
-    /// Atributos
-    private $numeroEmpleado;
-    private $numeroLicencia;
-    private $nombre;
-    private $apellido;
+    // Atributo estático
+    private static int $numeroEmpleadoStatic = 0;
+
+    // Atributos
+    private int $numeroEmpleado;
+    private int $numeroLicencia;
+    private string $nombre;
+    private string $apellido;
 
     /// Constructor
-    public function __construct($numeroEmpleado, $numeroLicencia, $nombre, $apellido) {
-        $this->numeroEmpleado = $numeroEmpleado;
+    public function __construct(
+        int $numeroLicencia,
+        string $nombre,
+        string $apellido
+    ){
+        self::$numeroEmpleadoStatic++;
+        $this->numeroEmpleado = self::$numeroEmpleadoStatic;
         $this->numeroLicencia = $numeroLicencia;
         $this->nombre = $nombre;
         $this->apellido = $apellido;
     }
 
-    /// Metodos de acceso / Getters
-    public function getNumeroEmpleado() {
+    // GETTERS
+    public function getNumeroEmpleado(): int{
         return $this->numeroEmpleado;
     }
 
-    public function getNumeroLicencia() {
+    public function getNumeroLicencia(): int{
         return $this->numeroLicencia;
     }
 
-    public function getNombre() {
+    public function getNombre(): string{
         return $this->nombre;
     }
 
-    public function getApellido() {
+    public function getApellido(): string{
         return $this->apellido;
     }
 
-    /// Metodos de modificacion / Setters
-    public function setNumeroEmpleado($numeroEmpleado) {
-        $this->numeroEmpleado = $numeroEmpleado;
-    }
-
-    public function setNumeroLicencia($numeroLicencia) {
+    // SETTERS
+    public function setNumeroLicencia(int $numeroLicencia): void{
         $this->numeroLicencia = $numeroLicencia;
     }
 
-    public function setNombre($nombre) {
+    public function setNombre(string $nombre): void{
         $this->nombre = $nombre;
     }
 
-    public function setApellido($apellido) {
+    public function setApellido(string $apellido): void{
         $this->apellido = $apellido;
     }
 
     /// Metodo __toString
-    public function __toString() {
-        $cadena = ("Numero Empleado: " . $this->getNumeroEmpleado() . 
-                    "\nNumero Licencia: " . $this->getNumeroLicencia() . 
-                    "\nNombre: " . $this->getNombre() . 
-                    "\nApellido: " . $this->getApellido());
-        return $cadena;
+    public function __toString(): string{
+        $numeroEmpleado = $this->getNumeroEmpleado();
+        $numeroLicencia = $this->getNumeroLicencia();
+        $nombre = $this->getNombre();
+        $apellido = $this->getApellido();
+
+        return
+            "Número empleado: $numeroEmpleado\n".
+            "Número licencia: $numeroLicencia\n".
+            "Nombre Responsable: $nombre $apellido\n".
+            "-----------------------------";
+        ;
     }
 }
 ?>

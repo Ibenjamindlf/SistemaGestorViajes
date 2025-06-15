@@ -170,7 +170,7 @@ public function buscar($numeroDoc){
                     "' WHERE documento=" . $this->getNumeroDocumento() . ";";
         if($dataBase->iniciar()){
             if($dataBase->ejecutar($consulta)){
-                $resp=true;
+                $respuesta=true;
             }else{
                 throw new Exception("Error: la consulta no se pudo ejecutar");
             }
@@ -187,7 +187,7 @@ public function buscar($numeroDoc){
         if($dataBase->iniciar()){
             $consulta="DELETE FROM persona WHERE documento=".$this->getNumeroDocumento();
             if($dataBase->ejecutar($consulta)){
-                $resp=true;
+                $respuesta=true;
             }else{
                 throw new Exception("Error: la consulta no se pudo ejecutar");
             }

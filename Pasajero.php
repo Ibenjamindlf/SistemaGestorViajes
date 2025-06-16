@@ -72,6 +72,9 @@ class Pasajero{
             "-----------------------------"
 ;
 }
+
+// 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL PHP MY admin
+
 // Funcion para buscar un pasajero por DNI en la base de datos
 // Return true si se encontró al pasajero, false si no
 public function buscar($numeroDoc){
@@ -81,6 +84,7 @@ public function buscar($numeroDoc){
 
     if ($dataBase->iniciar()) {
         if ($dataBase->ejecutar($consulta)) {
+            // Mientras $fila tenga valor el if se ejecuta
             if ($fila = $dataBase->registro()) {
                 $this->setNumeroDocumento($fila['numeroDocumento']);
                 $this->setNombre($fila['nombre']);
@@ -101,49 +105,45 @@ public function buscar($numeroDoc){
 }
 // Funcion para listar toda la tabla Pasajero
 // Return el arreglo con los pasajeros o null
-    public function listar($condicion = "") {
-    $arrayPasajero = null;
-    $dataBase = new DataBase();
-    $consulta = "SELECT * FROM pasajero";
+    public static function listar($condicion = "") {
+        $arrayPasajero = null;
+        $dataBase = new DataBase();
+        $consulta = "SELECT * FROM pasajero";
+        
+        if ($condicion != "") {
+            $consulta .= " WHERE " . $condicion;
+        }
+        $consulta .= " ORDER BY nombre";
 
-    if ($condicion != "") {
-        $consulta .= " WHERE " . $condicion;
-    }
-
-    $consulta .= " ORDER BY nombre";
-
-    if ($dataBase->iniciar()) {
-        if ($dataBase->ejecutar($consulta)) {
-            $arrayPasajero = array();
-            while ($fila = $dataBase->registro()) {
-                // Creamos el objeto pasajero con valores "nulos"
-                $pasajero = new Pasajero(0,"","",0,0);
-
-                // Asignamos directamente los datos del array
-                $pasajero->setNumeroDocumento($fila['numeroDocumento']);
-                $pasajero->setNombre($fila['nombre']);
-                $pasajero->setApellido($fila['apellido']);
-                $pasajero->setTelefono($fila['telefono']);
-                $pasajero->setViaje($fila['idviaje']);
-
-                // Lo agregamos al array
-                array_push($arrayPasajero, $pasajero);
+        if ($dataBase->iniciar()) {
+            if ($dataBase->ejecutar($consulta)) {
+                $arrayPasajero = [];
+                // Mientras $row tenga valor el while sigue reiterando
+                while ($row = $dataBase->registro()) {
+                    $objPasajero = new Pasajero(
+                        $row['numeroDocumento'],
+                        $row['nombre'],
+                        $row['apellido'],
+                        $row['telefono'],
+                        $row['idviaje']
+                    );
+                    $arrayPasajero[] = $objPasajero;
+                }
+            } else {
+                throw new Exception("Error: la consulta no se pudo ejecutar");
             }
         } else {
-            throw new Exception("Error: la consulta no se pudo ejecutar");
+            throw new Exception("Error: la base de datos no se pudo iniciar");
         }
-    } else {
-        throw new Exception("Error: la base de datos no se pudo iniciar");
-    }
 
-    return $arrayPasajero;
-}
+        return $arrayPasajero;
+    }
 // Funcion para insertar un nuevo pasajero
 // Return
     public function insertar(){
         $dataBase = new DataBase();
         $respuesta = false;
-        $consulta="INSERT INTO persona(numeroDocumento, nombre, apellido, telefono, idViaje)
+        $consulta="INSERT INTO pasajero(numeroDocumento, nombre, apellido, telefono, idViaje)
                 VALUES ('".$this->getNumeroDocumento()."','".$this->getNombre()."','".$this->getApellido()."','".$this->getTelefono()."','".$this->getViaje()."')";
         if($dataBase->iniciar()){
             if($dataBase->ejecutar($consulta)){
@@ -163,7 +163,7 @@ public function buscar($numeroDoc){
     public function modificar(){
         $respuesta=false;
         $dataBase = new DataBase();
-        $consulta = "UPDATE persona SET nombre='" . $this->getNombre() .
+        $consulta = "UPDATE pasajero SET nombre='" . $this->getNombre() .
                                         "',apellido='" . $this->getApellido() .
                                         "',telefono='" . $this->getTelefono() .
                                         "',idViaje='" . $this->getViaje() .

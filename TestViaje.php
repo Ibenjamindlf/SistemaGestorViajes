@@ -78,8 +78,12 @@ switch ($opcion) {
 // Ver Pasajeros 13
     case 13:
         $colPasajeros = mostrarPasajeros();
-        foreach ($colPasajeros as $unPasajero){
-            echo $unPasajero;
+        if (count($colPasajeros) > 0) {
+            foreach ($colPasajeros as $unPasajero){
+                echo $unPasajero;
+            }
+        } else {
+            echo "No se encontraron pasajeros.\n";
         }
     break;
 // Ingresar Pasajeros 14
@@ -95,6 +99,11 @@ switch ($opcion) {
         echo "Ingrese el ID del viaje: \n";
         $idViaje=trim(fgets(STDIN));
         $salida = ingresarPasajero($numDocumento,$nombre,$apellido,$telefono,$idViaje);
+        if ($salida){
+            echo ("Se ingreso el pasajero con los siguientes datos $numDocumento,$nombre,$apellido,$telefono al viaje con ID: $idViaje");
+        } else {
+            echo ("No se encontró ningun viaje con dicho ID.");
+        }
         echo $salida;
     break;
 // Modificar Pasajeros 15
@@ -148,43 +157,43 @@ switch ($opcion) {
 //     echo "❌ Error al conectar a la base de datos: " . $bd->getError();
 // }
 
-// Funcion que devuelve una cadena de los pasajeros listados
-// Return array
-function mostrarPasajeros(){
-    // Inicio un pasajero en vacio para poder hacer la referencia
-    $pasajero=new Pasajero(0,"","",0,0);
-    // Llamo la funcio listar() declarada en Pasajero.php
-    $pasajeros=$pasajero->listar();
-    // Inicio una variable de almacenamiento
-    $colPasajeros= [];
-    // Recorro y guardo
-    foreach($pasajeros as $pasajero){
-        array_push($colPasajeros,$pasajero);
-        // echo "\n$pasajero";
+// Función que devuelve un array con los pasajeros listados
+function mostrarPasajeros() {
+    $colPasajeros = [];
+    try {
+        $pasajeros = Pasajero::listar();
+        foreach ($pasajeros as $pasajero) {
+            $colPasajeros[] = $pasajero;
+        }
+    } catch (Exception $e) {
+        echo "Error al obtener los pasajeros: " . $e->getMessage() . "\n";
     }
     return $colPasajeros;
 }
 // Funcion para ingresar un pasajero
 // Return string
 function ingresarPasajero($numDocumento,$nombre,$apellido,$telefono,$idViaje){
-    $viaje = new Viaje("",0,"","",0);
+    // Modificar viaje para borrar errores de tipeos
+    $viaje = new Viaje("","","","","");
     if (!$viaje->buscar($idViaje)){
-        $cadena = ("No se encontró ningun viaje con dicho ID.");
+        $viajeValido = false;
     } else {
         $pasajeroNuevo = new Pasajero($numDocumento,$nombre,$apellido,$telefono,$idViaje);
         $pasajeroNuevo->insertar();
-        $cadena = ("Se ingreso el pasajero con los siguientes datos $numDocumento,$nombre,$apellido,$telefono al viaje con ID: $idViaje");
+        $viajeValido = true;
     }
-    return $cadena;
+    return $viajeValido;
 }
 // Funcion para econtrar un pasajero
 // Return object
 function encontrarPasajero($numDocumento){
-    // Creo un pasajero vacio
-    $pasajero = new Pasajero(0,"","",0,0);
+    // Creo un pasajero referencia
+    $pasajero = new Pasajero("","","","","");
+    // Veo si el pasajero existe
     if (!$pasajero->buscar($numDocumento)){
         $retorno = (null);
     } else {
+        // Almaceno sus datos en la referencia vacia
         $retorno = $pasajero;
     }
     return $retorno;

@@ -82,11 +82,12 @@ class DataBase{
     }
 
     /**
-     * Devuelve un registro retornado por la ejecucion de una consulta
-     * el puntero se despleza al siguiente registro de la consulta
-     *
-     * @return boolean
-     */
+    * Devuelve una fila del resultado de la última consulta SELECT ejecutada.
+    * Cada vez que se llama, avanza al siguiente registro.
+    * Si ya no quedan filas, devuelve null.
+    * Útil para recorrer los resultados de una consulta con un while.
+    * @return boolean
+    */
     public function registro() {
         $resp = null;
         if ($this->RESULT){

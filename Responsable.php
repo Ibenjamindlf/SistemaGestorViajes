@@ -1,5 +1,5 @@
 <?php
-// Clase Responsable
+// Responsable.php inicio
 Class Responsable {
     // Atributo estático (id autoincrementado)
     private static int $numeroEmpleadoStatic = 0;

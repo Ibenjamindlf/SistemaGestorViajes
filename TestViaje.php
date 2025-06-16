@@ -145,8 +145,9 @@ switch ($opcion) {
         echo"\nLa opcion ingresada es invalida.\n";
     break;
 }
+
 // // Codigo para iniciar y cerrar la database 👇🏻
-// $bd = new BaseDatos();
+// $bd = new DataBase();
 
 // if ($bd->iniciar()) {
 //     echo "✅ Conexión exitosa a la base de datos.\n";

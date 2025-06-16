@@ -73,7 +73,7 @@ class Pasajero{
 ;
 }
 
-// 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL PHP MY admin
+// 5 funciones (buscar,listar,insertar,modificar,eliminar) -> phpMyAdmin
 
 // Funcion para buscar un pasajero por DNI en la base de datos
 // Return true si se encontró al pasajero, false si no

@@ -1,5 +1,5 @@
 <?php
-
+// BaseDatos.php validado
 class DataBase{
 
     private $HOSTNAME;

@@ -1,5 +1,5 @@
 <?php
-// Clase viaje
+// Viaje.php inicio
 class Viaje{
     // Atributo estático
     private static int $idViajeStatic = 0;

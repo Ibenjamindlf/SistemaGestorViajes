@@ -1,4 +1,4 @@
--- bdviajes.sql Validado
+-- bdviajes.sql validado
 CREATE DATABASE bdviajes; 
 USE bdviajes;
 

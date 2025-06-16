@@ -1,5 +1,5 @@
 <?php
-// Clase Empresa
+// Empresa.php inicio
 class Empresa{
     // Atributo estático
     private static int $idEmpresaStatic = 0;

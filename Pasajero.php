@@ -1,4 +1,5 @@
 <?php
+// pasajero.php estable
 // De los pasajeros se conoce su nombre, apellido, número de documento y teléfono.
 class Pasajero{
 // Atributo de instancia 

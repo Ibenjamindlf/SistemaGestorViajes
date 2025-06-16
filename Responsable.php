@@ -1,20 +1,18 @@
 <?php
 // Clase Responsable
 Class Responsable {
-    // Atributo estático
+    // Atributo estático (id autoincrementado)
     private static int $numeroEmpleadoStatic = 0;
-
     // Atributos
-    private int $numeroEmpleado;
-    private int $numeroLicencia;
-    private string $nombre;
-    private string $apellido;
-
+    private $numeroEmpleado;
+    private $numeroLicencia;
+    private $nombre;
+    private $apellido;
     /// Constructor
     public function __construct(
-        int $numeroLicencia,
-        string $nombre,
-        string $apellido
+        $numeroLicencia,
+        $nombre,
+        $apellido
     ){
         self::$numeroEmpleadoStatic++;
         $this->numeroEmpleado = self::$numeroEmpleadoStatic;
@@ -24,42 +22,41 @@ Class Responsable {
     }
 
     // GETTERS
-    public function getNumeroEmpleado(): int{
+    public function getNumeroEmpleado(){
         return $this->numeroEmpleado;
     }
 
-    public function getNumeroLicencia(): int{
+    public function getNumeroLicencia(){
         return $this->numeroLicencia;
     }
 
-    public function getNombre(): string{
+    public function getNombre(){
         return $this->nombre;
     }
 
-    public function getApellido(): string{
+    public function getApellido(){
         return $this->apellido;
     }
 
     // SETTERS
-    public function setNumeroLicencia(int $numeroLicencia): void{
+    public function setNumeroLicencia($numeroLicencia){
         $this->numeroLicencia = $numeroLicencia;
     }
 
-    public function setNombre(string $nombre): void{
+    public function setNombre($nombre){
         $this->nombre = $nombre;
     }
 
-    public function setApellido(string $apellido): void{
+    public function setApellido($apellido){
         $this->apellido = $apellido;
     }
 
     /// Metodo __toString
-    public function __toString(): string{
+    public function __toString(){
         $numeroEmpleado = $this->getNumeroEmpleado();
         $numeroLicencia = $this->getNumeroLicencia();
         $nombre = $this->getNombre();
         $apellido = $this->getApellido();
-
         return
             "Número empleado: $numeroEmpleado\n".
             "Número licencia: $numeroLicencia\n".
@@ -67,5 +64,6 @@ Class Responsable {
             "-----------------------------";
         ;
     }
+    // Realizar las 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL phpMyAdmin
 }
 ?>

@@ -1,4 +1,5 @@
 <?php
+// TestViaje.php en desarrollo
 include_once 'BaseDatos.php';
 include_once 'Empresa.php';
 include_once 'Pasajero.php';

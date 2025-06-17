@@ -62,7 +62,7 @@ Class Responsable {
             "-----------------------------";
         ;
     }
-    // Realizar las 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL phpMyAdmin
+    // 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL phpMyAdmin
 
     // Funcion para buscar un Responsable por su numero de empleado en la base de datos
     // Return true si se encontró al responsable, false si no
@@ -73,8 +73,8 @@ Class Responsable {
 
         if ($dataBase->iniciar()) {
             if($dataBase->ejecutar($consulta)) {
+                // Mientras $fila tenga valor el if se ejecuta
                 if($fila = $dataBase->registro()) {
-                /// CONSULTAR SI TENGO QUE HACER LO MISMO CON EL ATRIBUTO ESTATICO
                     $this->setNumeroLicencia($fila['numeroLicencia']);
                     $this->setNombre($fila['nombre']);
                     $this->setApellido($fila['apellido']);
@@ -103,7 +103,7 @@ Class Responsable {
         $consulta .= " ORDER BY nombre";
 
         if ($dataBase->iniciar()) {
-            if ($dataBase->ejercutar($consulta)) {
+            if ($dataBase->ejecutar($consulta)) {
                 $arrayResponsable = [];
 
                 while ($row = $dataBase->registro()) {
@@ -147,7 +147,36 @@ Class Responsable {
         $respuesta = false;
         $dataBase = new DataBase();
         $consulta = "UPDATE responsable SET numeroLicencia='". $this->getNumeroLicencia() . 
-                                            "',nombre='" . $this->getNombre() .          
+                                            "',nombre='" . $this->getNombre() . 
+                                            "',apellido=" . $this->getApellido() . 
+                    "' WHERE numeroEmpleado='" . $this->getNumeroEmpleado() .";";
+        if ($dataBase->iniciar()) {
+            if ($dataBase->ejecutar($consulta)) {
+                $respuesta = true;
+            } else {
+                throw new Exception("Error: la consulta no se pudo ejecutar");
+            }
+        } else {
+            throw new Exception("Error: la base de datos no se pudo iniciar");
+        }
+        return $respuesta;
+    }
+    // Funcion para eliminar un Pasajero
+    // Return
+    public function eliminar() {
+        $respuesta = false;
+        $dataBase = new DataBase();
+        if($dataBase->iniciar()) {
+            $consulta = "DELETE FROM responsable WHERE numeroEmpleado=" . $this->getNumeroEmpleado();
+            if ($dataBase->ejecutar($consulta)) {
+                $respuesta = true;
+            } else {
+                throw new Exception("Error: la consulta no se pudo ejecutar");
+            }
+        } else {
+            throw new Exception("Error: la base de datos no se pudo iniciar");
+        }
+        return $respuesta;
     }
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-// Viaje.php inicio
+// Viaje.php inicio Ale
 class Viaje{
     // Atributo estático
     private static int $idViajeStatic = 0;

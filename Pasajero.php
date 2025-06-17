@@ -80,7 +80,7 @@ class Pasajero{
 // Return true si se encontró al pasajero, false si no
 public function buscar($numeroDoc){
     $dataBase = new DataBase();
-    $consulta = "SELECT * FROM pasajero WHERE idpasajero = '" . $numeroDoc . "'";
+    $consulta = "SELECT * FROM pasajero WHERE numeroDocumento = '" . $numeroDoc . "'";
     $respuesta = false;
 
     if ($dataBase->iniciar()) {

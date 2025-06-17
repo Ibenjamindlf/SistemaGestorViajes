@@ -16,3 +16,11 @@ Gabriel Britos FAI-5529
 Veronica Lopez FAI-5481  
 Alejo Lopez FAI-3146  
 Benjamin de la fuente FAI-4291  
+
+### Etapas de commits
+
+- `inicio`: Archivo inicial
+- `en desarrollo`: Trabajo activo
+- `revisión`: Feedback y pruebas
+- `pre-validado`: Lista preliminar
+- `validado`: Versión final confirmada

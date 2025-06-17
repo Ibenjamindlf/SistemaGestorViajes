@@ -56,6 +56,7 @@ class Empresa{
 
     // 5 funciones (buscar,listar,insertar,modificar,eliminar) -> phpMyAdmin
     /**
+     * Funcion Validada ✅
      * Función para buscar empresa segun idEmpresa.
      * Retorna true si la encuentra, falso caso contrario.
      * 
@@ -88,12 +89,13 @@ class Empresa{
     }
 
     /**
+     * Funcion Validada ✅
      * Función para listar toda la tabla Empresa
      * 
      * @param string $condicion
      * @return array
     */
-    public static function listar(string $condicion): array{
+    public static function listar(string $condicion = ""): array{
         $arrayEmpresa = [];
         $dataBase = new DataBase();
         $consulta = "SELECT * FROM empresa";
@@ -126,7 +128,9 @@ class Empresa{
     }
 
     /**
+     * Funcion validada ✅
      * Función para insertar registro de Empresa.
+     * llama la funcion devuelveIDInsercion() que ejecuta la consulta, no hace falta llamar ejecutar() 
      * Retorna true en caso de éxito
      * 
      * @return bool
@@ -157,6 +161,7 @@ class Empresa{
     }
 
     /**
+     * Funcion validada ✅
      * Función para modificar datos de Empresa.
      * Retorna true en caso de éxito
      * 
@@ -186,6 +191,7 @@ class Empresa{
     }
 
     /**
+     * Funcion validada ✅
      * Función para eliminar registro de Empresa.
      * Retorna true en caso de éxito
      * 

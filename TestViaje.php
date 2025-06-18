@@ -510,27 +510,27 @@ function eliminarViaje ($idViaje){
 // Función que devuelve un array con los pasajeros listados
 function verPasajeros(){
     try{
-        $pasajeros = Pasajero::listar(); // sin condición -> trae todas los responsables de la BD
+        $pasajeros = Pasajero::listar(); // sin condición -> trae todas las personas de la BD
 
-        // Si hay responsables registrados
+        // Si hay pasajeros registrados
         if(count($pasajeros) > 0){
 
             foreach ($pasajeros as $unPasajero) {
-                echo "-------- RESPONSABLE --------\n";
+                echo "-------- PASAJERO --------\n";
                 echo "$unPasajero\n"; // usamos __toString()
             }
 
         }else{
-            echo "No hay responsables registrados.\n";
+            echo "No hay pasajeros registrados.\n";
         }
     }catch(Exception $e){
-        echo "Error al listar responsables: " . $e->getMessage();
+        echo "Error al listar pasajeros: " . $e->getMessage();
     }
 }
 // OPCION 7:
 function buscarPasajero(){
-    // Solicito ID del responsable que se desea buscar
-    $numeroDocumentoPasajero = (int)readline("Ingresar número de empleado del responsable buscado: ");
+    // Solicito numDoc de la persona que se desea buscar
+    $numeroDocumentoPasajero = (int)readline("Ingresar número de documento de la persona buscada: ");
 
     try{
         $pasajero = Pasajero::buscar($numeroDocumentoPasajero);
@@ -539,7 +539,7 @@ function buscarPasajero(){
             echo "-------- RESPONSABLE --------\n";
             echo "$pasajero\n"; // usamos __toString()
         }else{
-            echo "No se encontró ningun responsable con número de empleado $idResponsable.\n";
+            echo "No se encontró ninguna persona con ese número de documento $numeroDocumentoPasajero.\n";
         }
     }catch(Exception $e){
         echo "Error al buscar responsable: " . $e->getMessage();
@@ -547,40 +547,40 @@ function buscarPasajero(){
 }
 // OPCION 8:
 function IngresarPasajero(){
-    // Pido datos del responsable
-    $numeroDoc = (int)readline("Ingresar número de licencia: ");
-    $nombre = readline("Ingresar nombre del responsable: ");
-    $apellido = readline("Ingresar apellido del responsable: ");
-    $telefono = readline("Ingresar telefono del responsable: ");
-    $idViaje = readline("Ingresar idViaje del responsable: ");
+    // Pido datos del pasajero
+    $numeroDoc = (int)readline("Ingresar número de documento: ");
+    $nombre = readline("Ingresar nombre del pasajero: ");
+    $apellido = readline("Ingresar apellido del pasajero: ");
+    $telefono = readline("Ingresar telefono del pasajero: ");
+    $idViaje = readline("Ingresar el idViaje del pasajero: ");
 
-    // Creo instancia de Responsable con los datos ingresados
+    // Creo instancia de pasajero con los datos ingresados
     $pasajero = new Pasajero($numeroDoc, $nombre, $apellido,$telefono,$idViaje);
 
     try {
         if ($pasajero->insertar()) {
-            echo "Responsable insertado con éxito\n";
+            echo "Pasajero insertado con éxito\n";
         } else {
-            echo "No se pudo insertar responsable.\n";
+            echo "No se pudo insertar el pasajero.\n";
         }
     } catch (Exception $e) {
-        echo "Error al insertar responsable: " . $e->getMessage();
+        echo "Error al insertar el pasajero: " . $e->getMessage();
     }
 }
 // OPCION 9:
 function modificarPasajero(){
     // Pido ID del Responsable que quiero modificar
-    $numeroDocumentoPasajero = (int)readline("Ingresar número de empleado del Responsable a modificar: ");
+    $numeroDocumentoPasajero = (int)readline("Ingresar número de documento de la persona a modificar: ");
 
     $pasajero = Pasajero::buscar($numeroDocumentoPasajero);
 
     if($pasajero !== null){
-        // Pedimos los nuevos datos del responsable
-        $numeroDoc = (int)readline("Ingresar número de licencia: ");
-        $nombre = readline("Ingresar nombre del responsable: ");
-        $apellido = readline("Ingresar apellido del responsable: ");
-        $telefono = readline("Ingresar telefono del responsable: ");
-        $idViaje = readline("Ingresar idViaje del responsable: ");
+        // Pedimos los nuevos datos del pasajero
+        $numeroDoc = (int)readline("Ingresar número de documento: ");
+        $nombre = readline("Ingresar nombre del pasajero: ");
+        $apellido = readline("Ingresar apellido del pasajero: ");
+        $telefono = readline("Ingresar telefono del pasajero: ");
+        $idViaje = readline("Ingresar idViaje del pasajero: ");
 
         if($numeroDoc !== "" && $nombre !== "" && $apellido !== "" && $telefono !== "" && $idViaje !==""){
             $pasajero->setNumeroDocumento($numeroDoc);
@@ -599,19 +599,19 @@ function modificarPasajero(){
                     echo "No se pudo modificar pasajero. Falló en la base de datos.\n";
                 }
             } catch (Exception $e) {
-                echo "Error al modificar responsable: " . $e->getMessage() . "\n";
+                echo "Error al modificar pasajero: " . $e->getMessage() . "\n";
             }
         }else{
             echo "Datos invalidos. Falló la modificación.\n";
         }
     }else{
-        echo "No se encontró ningun responsable con numero de empleado $idResponsable.\n";
+        echo "No se encontró ningun pasajero con numero de empleado $numeroDocumentoPasajero.\n";
     } 
 }
 // OPCION 10:
 function eliminarPasajero(){
     // Pido número de empleado del responsable que quiero eliminar
-    $numeroDoc = (int)readline("Ingresar número de empleado del responsable a eliminar: ");
+    $numeroDoc = (int)readline("Ingresar número de documento del pasajero a eliminar: ");
 
     $pasajero = Pasajero::buscar($numeroDoc);
         
@@ -621,13 +621,13 @@ function eliminarPasajero(){
         echo "$pasajero\n"; // usamos __toString()
 
         // Confirmación del usuario
-        $confirmar = strtolower(readline("¿Desea eliminar este responsable? (si/no): "));
+        $confirmar = strtolower(readline("¿Desea eliminar este pasajero? (si/no): "));
 
         if($confirmar === "si"){
 
             try {
                 if ($pasajero->eliminar()) {
-                    echo "Pasajeor eliminado con éxito.\n";
+                    echo "Pasajero eliminado con éxito.\n";
                 } else {
                     echo "No se pudo eliminar pasajero.\n";
                 }
@@ -639,7 +639,7 @@ function eliminarPasajero(){
             echo "Eliminación cancelada.\n";
         }
     }else{
-        echo "No se encontró ningun responsable con numero de empleado $numeroDoc.\n";
+        echo "No se encontró ningun pasajero con numero de documento $numeroDoc.\n";
     }
 }
 ?>

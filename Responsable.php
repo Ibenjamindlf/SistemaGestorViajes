@@ -66,7 +66,7 @@ Class Responsable {
             "-----------------------------";
         ;
     }
-    
+
     // 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL phpMyAdmin
 
     /**

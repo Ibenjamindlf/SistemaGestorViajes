@@ -78,7 +78,7 @@ class Pasajero{
 
 // Funcion para buscar un pasajero por DNI en la base de datos
 // Return true si se encontró al pasajero, false si no
-public function buscar($numeroDoc){
+public static function buscar($numeroDoc){
     $dataBase = new DataBase();
     $consulta = "SELECT * FROM pasajero WHERE numeroDocumento = '" . $numeroDoc . "'";
     $pasajeroEncontrado = null;

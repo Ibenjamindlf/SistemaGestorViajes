@@ -269,69 +269,142 @@ switch ($opcion) {
 // }
 
 //-----------------------------------------Responsable 👇🏻---------------------------------------------
-// Funcion en revisión ❔
-// Funcion que devuelve un array con los responsables listados
-function mostrarResponsables() {
-    $colResponsables = [];
+//------------------------------------------ RESPONSABLE ---------------------------------------------
+// OPCION 6:
+function verResponsables(){
+    try{
+        $responsables = Responsable::listar(); // sin condición -> trae todas los responsables de la BD
+
+        // Si hay responsables registrados
+        if(count($responsables) > 0){
+
+            foreach ($responsables as $responsable) {
+                echo "-------- RESPONSABLE --------\n";
+                echo "$responsable\n"; // usamos __toString()
+            }
+
+        }else{
+            echo "No hay responsables registrados.\n";
+        }
+    }catch(Exception $e){
+        echo "Error al listar responsables: " . $e->getMessage();
+    }
+}
+
+// OPCION 7:
+function buscarResponsable(){
+    // Solicito ID del responsable que se desea buscar
+    $idResponsable = (int)readline("Ingresar número de empleado del responsable buscado: ");
+
+    try{
+        $responsable = Responsable::buscar($idResponsable);
+        if($responsable !== null){
+            echo "Responsable encontrado:\n";
+            echo "-------- RESPONSABLE --------\n";
+            echo "$responsable\n"; // usamos __toString()
+        }else{
+            echo "No se encontró ningun responsable con número de empleado $idResponsable.\n";
+        }
+    }catch(Exception $e){
+        echo "Error al buscar responsable: " . $e->getMessage();
+    }
+}
+
+// OPCION 8:
+function ingresarResponsable(){
+    // Pido datos del responsable
+    $numeroLicencia = (int)readline("Ingresar número de licencia: ");
+    $nombre = readline("Ingresar nombre del responsable: ");
+    $apellido = readline("Ingresar apellido del responsable: ");
+
+    // Creo instancia de Responsable con los datos ingresados
+    $responsable = new Responsable($numeroLicencia, $nombre, $apellido);
+
     try {
-        $responsables = Responsable::listar();
-        foreach ($responsables as $responsable) {
-            $colResponsables[] = $responsable;
+        if ($responsable->insertar()) {
+            echo "Responsable insertado con éxito\n";
+        } else {
+            echo "No se pudo insertar responsable.\n";
         }
     } catch (Exception $e) {
-        echo "Error al obtener los responsables: " . $e->getMessage() . "\n";
+        echo "Error al insertar responsable: " . $e->getMessage();
     }
-    return $colResponsables;
 }
-// Funcion en revisión ❔
-// Funcion para ingresar un responsable
-// Return string
-function ingresarResponsable($numLicencia,$nombre,$apellido) {
-    $responsableNuevo = new Responsable($numLicencia,$nombre,$apellido);
-    $responsableNuevo->insertar();
+
+// OPCION 9:
+function modificarResponsable(){
+    // Pido ID del Responsable que quiero modificar
+    $idResponsable = (int)readline("Ingresar número de empleado del Responsable a modificar: ");
+
+    $responsable = Responsable::buscar($idResponsable);
+
+    if($responsable !== null){
+        // Pedimos los nuevos datos del responsable
+        $numeroLicencia = (int)readline("Ingresar el nuevo número de licencia: ");
+        $nombre = readline("Ingresar nuevo nombre del responsable: ");
+        $apellido = readline("Ingresar nuevo apellido del responsable: ");
+
+        if($numeroLicencia !== "" && $nombre !== "" && $apellido !== ""){
+            $responsable->setNumeroLicencia($numeroLicencia);
+            $responsable->setNombre($nombre);
+            $responsable->setApellido($apellido);
+
+            // Modificamos en la BD
+            try {
+                if ($responsable->modificar()) {
+                    echo "Responsable modificado con éxito:\n";
+                    echo "-------- RESPONSABLE --------\n";
+                    echo "$responsable\n"; // usamos __toString()
+                } else {
+                    echo "No se pudo modificar responsable. Falló en la base de datos.\n";
+                }
+            } catch (Exception $e) {
+                echo "Error al modificar responsable: " . $e->getMessage() . "\n";
+            }
+        }else{
+            echo "Datos invalidos. Falló la modificación.\n";
+        }
+    }else{
+        echo "No se encontró ningun responsable con numero de empleado $idResponsable.\n";
+    } 
 }
-// Funcion en revisión ❔
-// Funcion para encontrar un responsable
-// Return object
-function encontrarResponsable($numEmpleado) {
-    // Creo un responsable referencia
-    $responsable = new Responsable("","","");
-    // Veo si el responsable existe
-    if (!$responsable->buscar($numEmpleado)){
-        $retorno = (null);
-    } else {
-        // Almaceno sus datos en la referencia vacia
-        $retorno = $responsable;
+
+// OPCION 10:
+function eliminarResponsable(){
+    // Pido número de empleado del responsable que quiero eliminar
+    $idResponsable = (int)readline("Ingresar número de empleado del responsable a eliminar: ");
+
+    $responsable = Responsable::buscar($idResponsable);
+        
+    if($responsable !== null){
+        echo "Responsable encontrado:\n";
+        echo "-------- RESPONSABLE --------\n";
+        echo "$responsable\n"; // usamos __toString()
+
+        // Confirmación del usuario
+        $confirmar = strtolower(readline("¿Desea eliminar este responsable? (si/no): "));
+
+        if($confirmar === "si"){
+
+            try {
+                if ($responsable->eliminar()) {
+                    echo "Responsable eliminado con éxito.\n";
+                } else {
+                    echo "No se pudo eliminar responsable.\n";
+                }
+            } catch (Exception $e) {
+                echo "Error al eliminar responsable: " . $e->getMessage() . "\n";
+            }
+
+        }else{
+            echo "Eliminación cancelada.\n";
+        }
+    }else{
+        echo "No se encontró ningun responsable con numero de empleado $idResponsable.\n";
     }
-    return $retorno;
 }
-// Funcion en revisión ❔
-// Funcion para modificar un responsable
-// Return bool
-function modificarResponsable($numEmpleado, $numLicencia, $nombre, $apellido) {
-    $responsable = encontrarResponsable($numEmpleado);
-    if ($responsable!=null) {
-        $responsable->setNumeroLicencia($numLicencia);
-        $responsable->setNombre($nombre);
-        $responsable->setApellido($apellido);
-        $seModifico = $responsable->modificar();
-    } else {
-        $seModifico = false;
-    }
-    return $seModifico;
-}
-// Funcion en revisión ❔
-// Funcion para eliminar un responsable
-// Return bool
-function eliminarResponsable($numEmpleado) {
-    $responsable = encontrarResponsable($numEmpleado);
-    if ($responsable!=null) {
-        $seElimino = $responsable->eliminar();
-    } else {
-        $seElimino = false;
-    }
-    return $seElimino;
-}
+
+//----------------------------------------------------------------------------------------------------
 //-----------------------------------------Viaje 👇🏻---------------------------------------------
 /**
  * Funcion en revisión ❔
@@ -435,70 +508,138 @@ function eliminarViaje ($idViaje){
 }
 //-----------------------------------------Pasajero 👇🏻---------------------------------------------
 // Función que devuelve un array con los pasajeros listados
-function mostrarPasajeros() {
-    $colPasajeros = [];
+function verPasajeros(){
+    try{
+        $pasajeros = Pasajero::listar(); // sin condición -> trae todas los responsables de la BD
+
+        // Si hay responsables registrados
+        if(count($pasajeros) > 0){
+
+            foreach ($pasajeros as $unPasajero) {
+                echo "-------- RESPONSABLE --------\n";
+                echo "$unPasajero\n"; // usamos __toString()
+            }
+
+        }else{
+            echo "No hay responsables registrados.\n";
+        }
+    }catch(Exception $e){
+        echo "Error al listar responsables: " . $e->getMessage();
+    }
+}
+// OPCION 7:
+function buscarPasajero(){
+    // Solicito ID del responsable que se desea buscar
+    $numeroDocumentoPasajero = (int)readline("Ingresar número de empleado del responsable buscado: ");
+
+    try{
+        $pasajero = Pasajero::buscar($numeroDocumentoPasajero);
+        if($pasajero !== null){
+            echo "Responsable encontrado:\n";
+            echo "-------- RESPONSABLE --------\n";
+            echo "$pasajero\n"; // usamos __toString()
+        }else{
+            echo "No se encontró ningun responsable con número de empleado $idResponsable.\n";
+        }
+    }catch(Exception $e){
+        echo "Error al buscar responsable: " . $e->getMessage();
+    }
+}
+// OPCION 8:
+function IngresarPasajero(){
+    // Pido datos del responsable
+    $numeroDoc = (int)readline("Ingresar número de licencia: ");
+    $nombre = readline("Ingresar nombre del responsable: ");
+    $apellido = readline("Ingresar apellido del responsable: ");
+    $telefono = readline("Ingresar telefono del responsable: ");
+    $idViaje = readline("Ingresar idViaje del responsable: ");
+
+    // Creo instancia de Responsable con los datos ingresados
+    $pasajero = new Pasajero($numeroDoc, $nombre, $apellido,$telefono,$idViaje);
+
     try {
-        $pasajeros = Pasajero::listar();
-        foreach ($pasajeros as $pasajero) {
-            $colPasajeros[] = $pasajero;
+        if ($pasajero->insertar()) {
+            echo "Responsable insertado con éxito\n";
+        } else {
+            echo "No se pudo insertar responsable.\n";
         }
     } catch (Exception $e) {
-        echo "Error al obtener los pasajeros: " . $e->getMessage() . "\n";
+        echo "Error al insertar responsable: " . $e->getMessage();
     }
-    return $colPasajeros;
 }
-// Funcion para ingresar un pasajero
-// Return string
-function ingresarPasajero($numDocumento,$nombre,$apellido,$telefono,$idViaje){
-    // Modificar viaje para borrar errores de tipeos
-    $viaje = new Viaje("","","","","");
-    if (!$viaje->buscar($idViaje)){
-        $viajeValido = false;
-    } else {
-        $pasajeroNuevo = new Pasajero($numDocumento,$nombre,$apellido,$telefono,$idViaje);
-        $pasajeroNuevo->insertar();
-        $viajeValido = true;
-    }
-    return $viajeValido;
+// OPCION 9:
+function modificarPasajero(){
+    // Pido ID del Responsable que quiero modificar
+    $numeroDocumentoPasajero = (int)readline("Ingresar número de empleado del Responsable a modificar: ");
+
+    $pasajero = Pasajero::buscar($numeroDocumentoPasajero);
+
+    if($pasajero !== null){
+        // Pedimos los nuevos datos del responsable
+        $numeroDoc = (int)readline("Ingresar número de licencia: ");
+        $nombre = readline("Ingresar nombre del responsable: ");
+        $apellido = readline("Ingresar apellido del responsable: ");
+        $telefono = readline("Ingresar telefono del responsable: ");
+        $idViaje = readline("Ingresar idViaje del responsable: ");
+
+        if($numeroDoc !== "" && $nombre !== "" && $apellido !== "" && $telefono !== "" && $idViaje !==""){
+            $pasajero->setNumeroDocumento($numeroDoc);
+            $pasajero->setNombre($nombre);
+            $pasajero->setApellido($apellido);
+            $pasajero->setTelefono($telefono);
+            $pasajero->setViaje($idViaje);
+
+            // Modificamos en la BD
+            try {
+                if ($pasajero->modificar()) {
+                    echo "Pasajero modificado con éxito:\n";
+                    echo "-------- PASAJERO --------\n";
+                    echo "$pasajero\n"; // usamos __toString()
+                } else {
+                    echo "No se pudo modificar pasajero. Falló en la base de datos.\n";
+                }
+            } catch (Exception $e) {
+                echo "Error al modificar responsable: " . $e->getMessage() . "\n";
+            }
+        }else{
+            echo "Datos invalidos. Falló la modificación.\n";
+        }
+    }else{
+        echo "No se encontró ningun responsable con numero de empleado $idResponsable.\n";
+    } 
 }
-// Funcion para econtrar un pasajero
-// Return object
-function encontrarPasajero($numDocumento){
-    // Creo un pasajero referencia
-    $pasajero = new Pasajero("","","","","");
-    // Veo si el pasajero existe
-    if (!$pasajero->buscar($numDocumento)){
-        $retorno = (null);
-    } else {
-        // Almaceno sus datos en la referencia vacia
-        $retorno = $pasajero;
+// OPCION 10:
+function eliminarPasajero(){
+    // Pido número de empleado del responsable que quiero eliminar
+    $numeroDoc = (int)readline("Ingresar número de empleado del responsable a eliminar: ");
+
+    $pasajero = Pasajero::buscar($numeroDoc);
+        
+    if($pasajero !== null){
+        echo "Pasajero encontrado:\n";
+        echo "-------- PASAJERO --------\n";
+        echo "$pasajero\n"; // usamos __toString()
+
+        // Confirmación del usuario
+        $confirmar = strtolower(readline("¿Desea eliminar este responsable? (si/no): "));
+
+        if($confirmar === "si"){
+
+            try {
+                if ($pasajero->eliminar()) {
+                    echo "Pasajeor eliminado con éxito.\n";
+                } else {
+                    echo "No se pudo eliminar pasajero.\n";
+                }
+            } catch (Exception $e) {
+                echo "Error al eliminar pasajero: " . $e->getMessage() . "\n";
+            }
+
+        }else{
+            echo "Eliminación cancelada.\n";
+        }
+    }else{
+        echo "No se encontró ningun responsable con numero de empleado $numeroDoc.\n";
     }
-    return $retorno;
-}
-// Funcion para modificar un pasajero
-// Return bool
-function modificarPasajero($numDoc,$nombre,$apellido,$telefono,$idViaje){
-    $pasajero = encontrarPasajero($numDoc);
-    if ($pasajero!=null){
-        $pasajero->setNombre($nombre);
-        $pasajero->setApellido($apellido);
-        $pasajero->setTelefono($telefono);
-        $pasajero->setViaje($idViaje);
-        $seModifico = $pasajero->modificar();
-    } else {
-        $seModifico = false;
-    }
-    return $seModifico;
-}
-// Funcion para eliminar un pasajero
-// Return bool
-function eliminarPasajero($numDoc){
-    $pasajero = encontrarPasajero($numDoc);
-    if ($pasajero!=null){
-        $seElimino = $pasajero->eliminar();
-    } else {
-        $seElimino = false;
-    }
-    return $seElimino;
 }
 ?>

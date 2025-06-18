@@ -576,14 +576,14 @@ function modificarPasajero(){
 
     if($pasajero !== null){
         // Pedimos los nuevos datos del pasajero
-        $numeroDoc = (int)readline("Ingresar número de documento: ");
+        // $numeroDoc = (int)readline("Ingresar número de documento: ");
         $nombre = readline("Ingresar nombre del pasajero: ");
         $apellido = readline("Ingresar apellido del pasajero: ");
-        $telefono = readline("Ingresar telefono del pasajero: ");
-        $idViaje = readline("Ingresar idViaje del pasajero: ");
+        $telefono = readline("Ingresar numero de telefono del pasajero: ");
+        $idViaje = readline("Ingresar numero de viaje: ");
 
-        if($numeroDoc !== "" && $nombre !== "" && $apellido !== "" && $telefono !== "" && $idViaje !==""){
-            $pasajero->setNumeroDocumento($numeroDoc);
+        if($nombre !== "" && $apellido !== "" && $telefono !== "" && $idViaje !==""){
+            // $pasajero->setNumeroDocumento($numeroDoc);
             $pasajero->setNombre($nombre);
             $pasajero->setApellido($apellido);
             $pasajero->setTelefono($telefono);

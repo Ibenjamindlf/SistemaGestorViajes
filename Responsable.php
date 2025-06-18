@@ -1,55 +1,59 @@
 <?php
-// Del responsable se conoce el numero de empleado, el numero de licencia, su nomre y su apellido
+include_once 'BaseDatos.php';
+
 Class Responsable {
-    // Atributo estático (id autoincrementado)
-    private static int $numeroEmpleadoStatic = 0;
-    // Atributos
-    private $numeroEmpleado;
-    private $numeroLicencia;
-    private $nombre;
-    private $apellido;
+    // Atributos de instancia
+    private int $numeroEmpleado = 0;
+    private int $numeroLicencia;
+    private string $nombre;
+    private string $apellido;
+
     /// Constructor
     public function __construct(
-        $numeroLicencia,
-        $nombre,
-        $apellido
+        int $numeroLicencia,
+        string $nombre,
+        string $apellido
     ){
-        self::$numeroEmpleadoStatic++;
-        $this->numeroEmpleado = self::$numeroEmpleadoStatic;
         $this->numeroLicencia = $numeroLicencia;
         $this->nombre = $nombre;
         $this->apellido = $apellido;
     }
+
     // GETTERS
-    public function getNumeroEmpleado(){
+    public function getNumeroEmpleado(): int{
         return $this->numeroEmpleado;
     }
 
-    public function getNumeroLicencia(){
+    public function getNumeroLicencia(): int{
         return $this->numeroLicencia;
     }
 
-    public function getNombre(){
+    public function getNombre(): string{
         return $this->nombre;
     }
 
-    public function getApellido(){
+    public function getApellido(): string{
         return $this->apellido;
     }
+
     // SETTERS
-    public function setNumeroLicencia($numeroLicencia){
+    public function setNumeroEmpleado(int $numeroEmpleado): void{
+        $this->numeroEmpleado = $numeroEmpleado;
+    }
+
+    public function setNumeroLicencia(int $numeroLicencia): void{
         $this->numeroLicencia = $numeroLicencia;
     }
 
-    public function setNombre($nombre){
+    public function setNombre(string $nombre): void{
         $this->nombre = $nombre;
     }
 
-    public function setApellido($apellido){
+    public function setApellido(string $apellido): void{
         $this->apellido = $apellido;
     }
 
-    /// Metodo __toString
+    // Metodo __toString
     public function __toString(){
         $numeroEmpleado = $this->getNumeroEmpleado();
         $numeroLicencia = $this->getNumeroLicencia();
@@ -62,38 +66,52 @@ Class Responsable {
             "-----------------------------";
         ;
     }
+    
     // 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL phpMyAdmin
 
-    // Funcion para buscar un Responsable por su numero de empleado en la base de datos
-    // Return true si se encontró al responsable, false si no
-    public function buscar($numEmpleado) {
+    /**
+     * Función para buscar empleado segun numeroEmpleado.
+     * Retorna true si la encuentra, falso caso contrario.
+     * 
+     * @param int numeroEmpleadp
+     * @return Responsable||null
+    */
+    public static function buscar(int $numeroEmpleado): ?Responsable {
         $dataBase = new DataBase();
-        $consulta = "SELECT * FROM responsale WHERE numeroEmpleado = '". $numEmpleado . "'";
-        $respuesta = false;
+        $consulta = "SELECT * FROM responsable WHERE numeroEmpleado = '". $numeroEmpleado . "'";
+        $responsableEncontrado = null;
 
         if ($dataBase->iniciar()) {
             if($dataBase->ejecutar($consulta)) {
                 // Mientras $fila tenga valor el if se ejecuta
                 if($fila = $dataBase->registro()) {
-                    $this->setNumeroLicencia($fila['numeroLicencia']);
-                    $this->setNombre($fila['nombre']);
-                    $this->setApellido($fila['apellido']);
 
-                    $respuesta = true;
+                    $responsableEncontrado = new Responsable(
+                        $fila['numeroLicencia'],
+                        $fila['nombre'],
+                        $fila['apellido']
+                    );
+
+                    $responsableEncontrado->setNumeroEmpleado($numeroEmpleado);
                 }
             } else {
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
         } else {
-        throw new Exception("Error: la base de datos no se pudo iniciar");
+            throw new Exception($dataBase->getError());
         }
 
-        return $respuesta;
+        return $responsableEncontrado;
     }
-    // Funcion para listar toda la tabla responsable
-    // Return el arreglo con los responsables o null
-    public static function listar($condicion = "") {
-        $arrayResponsable = null;
+
+    /**
+     * Función para listar toda la tabla Responsable
+     * 
+     * @param string $condicion
+     * @return array
+    */
+    public static function listar($condicion = ""): array{
+        $arrayResponsable = [];
         $dataBase = new DataBase();
         $consulta = "SELECT * FROM responsable";
 
@@ -104,77 +122,109 @@ Class Responsable {
 
         if ($dataBase->iniciar()) {
             if ($dataBase->ejecutar($consulta)) {
-                $arrayResponsable = [];
-
-                while ($row = $dataBase->registro()) {
+                // Mientras $fila tenga valor el if se ejecuta
+                while ($fila = $dataBase->registro()) {
                     $objResponsable = new Responsable(
-                        $row['numeroEmpleado'],
-                        $row['numeroLicencia'],
-                        $row['nombre'],
-                        $row['apellido']
+                        $fila['numeroLicencia'],
+                        $fila['nombre'],
+                        $fila['apellido']
                     );
+                    $objResponsable->setNumeroEmpleado($fila['numeroEmpleado']);
+
                     $arrayResponsable[] = $objResponsable;
                 }
             } else {
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
         } else {
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+            throw new Exception($dataBase->getError());
         }
         return $arrayResponsable;
     }
-    // Funcion para insertar un nuevo responsable
-    // Return true si se logro insertar el responsable nuevo, si no false
-    public function insertar() {
+
+    /**
+     * Función para insertar registro de Responsable.
+     * Retorna true en caso de éxito
+     * 
+     * @return bool
+    */
+    public function insertar(): bool{
         $dataBase = new DataBase();
         $respuesta = false;
-        $consulta = "INSERT INTO responsable(numeroEmpleado, numeroLIcencia, nombre, apellido)
-                    VALUES ('".$this->getNumeroEmpleado()."','".$this->getNumeroLicencia()."','".$this->getNombre()."','".$this->getApellido()."')";
+        $consulta =
+            "INSERT INTO responsable(numeroLicencia, nombre, apellido)
+            VALUES (".$this->getNumeroLicencia().",'".$this->getNombre()."','".$this->getApellido()."');"
+        ;
+        
         if ($dataBase->iniciar()) {
-            if ($dataBase->ejecutar($consulta)) {
-                        $respuesta = true;
+            $idInsertado = $dataBase->devuelveIDInsercion($consulta);
+
+            if ($idInsertado !== null){
+                $this->setNumeroEmpleado($idInsertado);
+                $respuesta = true;
             } else {
-                        throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
         } else {
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+            throw new Exception($dataBase->getError());
         }
+
         return $respuesta;
     }
-    // Funcion para modificar los datos de un responsable
-    // Return
+
+    /**
+     * Función para modificar datos de Responsable.
+     * Retorna true en caso de éxito
+     * 
+     * @return bool
+    */
     public function modificar() {
         $respuesta = false;
         $dataBase = new DataBase();
-        $consulta = "UPDATE responsable SET numeroLicencia='". $this->getNumeroLicencia() . 
-                                            "',nombre='" . $this->getNombre() . 
-                                            "',apellido=" . $this->getApellido() . 
-                    "' WHERE numeroEmpleado='" . $this->getNumeroEmpleado() .";";
+        $consulta =
+            "UPDATE responsable
+            SET numeroLicencia = '". $this->getNumeroLicencia() . "',
+            nombre = '" . $this->getNombre() . "',
+            apellido = '" . $this->getApellido() . "'
+            WHERE numeroEmpleado = " . $this->getNumeroEmpleado() . ";"
+        ;
+
         if ($dataBase->iniciar()) {
             if ($dataBase->ejecutar($consulta)) {
                 $respuesta = true;
             } else {
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
         } else {
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+            throw new Exception($dataBase->getError());
         }
+
         return $respuesta;
     }
-    // Funcion para eliminar un Pasajero
-    // Return
+
+    /**
+     * Función para eliminar registro de Responsable.
+     * Retorna true en caso de éxito
+     * 
+     * @return bool
+    */
     public function eliminar() {
         $respuesta = false;
         $dataBase = new DataBase();
+
         if($dataBase->iniciar()) {
-            $consulta = "DELETE FROM responsable WHERE numeroEmpleado=" . $this->getNumeroEmpleado();
+            $consulta =
+            "DELETE FROM responsable
+            WHERE numeroEmpleado = " . $this->getNumeroEmpleado() . ";"
+            ;
+
             if ($dataBase->ejecutar($consulta)) {
                 $respuesta = true;
             } else {
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
         } else {
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+            throw new Exception($dataBase->getError());
         }
         return $respuesta;
     }

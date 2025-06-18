@@ -170,7 +170,7 @@ public static function buscar($numeroDoc){
                                         "',apellido='" . $this->getApellido() .
                                         "',telefono='" . $this->getTelefono() .
                                         "',idViaje='" . $this->getViaje() .
-                    "' WHERE documento=" . $this->getNumeroDocumento() . ";";
+                    "' WHERE numeroDocumento=" . $this->getNumeroDocumento() . ";";
         if($dataBase->iniciar()){
             if($dataBase->ejecutar($consulta)){
                 $respuesta=true;

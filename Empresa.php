@@ -1,7 +1,8 @@
 <?php
-// Empresa.php inicio
+include_once 'BaseDatos.php';
+
 class Empresa{
-    // Atributos de instacia
+    // Atributos de instancia
     private int $idEmpresa = 0;
     private string $nombre;
     private string $direccion;
@@ -55,28 +56,30 @@ class Empresa{
     }
 
     // 5 funciones (buscar,listar,insertar,modificar,eliminar) -> phpMyAdmin
+    
     /**
-     * Funcion Validada ✅
      * Función para buscar empresa segun idEmpresa.
      * Retorna true si la encuentra, falso caso contrario.
      * 
      * @param int idEmpresa
-     * @return bool
+     * @return Empresa||null
     */
-    public function buscar(int $idEmpresa): bool{
+    public static function buscar(int $idEmpresa): ?Empresa{
         $dataBase = new DataBase();
         $consulta = "SELECT * FROM empresa WHERE idEmpresa = '" . $idEmpresa . "'";
-        $respuesta = false;
+        $empresaEncontrada = null;
 
         if($dataBase->iniciar()) {
             if($dataBase->ejecutar($consulta)){
                 // Mientras $fila tenga valor el if se ejecuta
                 if ($fila = $dataBase->registro()) {
-                    $this->setIdEmpresa($idEmpresa);
-                    $this->setNombre($fila['nombre']);
-                    $this->setDireccion($fila['direccion']);
 
-                    $respuesta = true;
+                    $empresaEncontrada = new Empresa(
+                        $fila['nombre'],
+                        $fila['direccion']
+                    );
+
+                    $empresaEncontrada->setIdEmpresa($idEmpresa);
                 }
             }else{
                 throw new Exception ($dataBase->getError());
@@ -85,11 +88,10 @@ class Empresa{
             throw new Exception ($dataBase->getError());
         }
 
-        return $respuesta;
+        return $empresaEncontrada;
     }
 
     /**
-     * Funcion Validada ✅
      * Función para listar toda la tabla Empresa
      * 
      * @param string $condicion
@@ -128,9 +130,7 @@ class Empresa{
     }
 
     /**
-     * Funcion validada ✅
      * Función para insertar registro de Empresa.
-     * llama la funcion devuelveIDInsercion() que ejecuta la consulta, no hace falta llamar ejecutar() 
      * Retorna true en caso de éxito
      * 
      * @return bool
@@ -142,7 +142,6 @@ class Empresa{
             "INSERT INTO empresa(nombre, direccion)
             VALUES ('".$this->getNombre()."', '".$this->getDireccion()."');"
         ;
-
 
         if($dataBase->iniciar()) {
             $idInsertado = $dataBase->devuelveIDInsercion($consulta);
@@ -161,7 +160,6 @@ class Empresa{
     }
 
     /**
-     * Funcion validada ✅
      * Función para modificar datos de Empresa.
      * Retorna true en caso de éxito
      * 
@@ -191,7 +189,6 @@ class Empresa{
     }
 
     /**
-     * Funcion validada ✅
      * Función para eliminar registro de Empresa.
      * Retorna true en caso de éxito
      * 

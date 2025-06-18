@@ -81,28 +81,29 @@ class Pasajero{
 public function buscar($numeroDoc){
     $dataBase = new DataBase();
     $consulta = "SELECT * FROM pasajero WHERE numeroDocumento = '" . $numeroDoc . "'";
-    $respuesta = false;
+    $pasajeroEncontrado = null;
 
     if ($dataBase->iniciar()) {
         if ($dataBase->ejecutar($consulta)) {
             // Mientras $fila tenga valor el if se ejecuta
             if ($fila = $dataBase->registro()) {
-                $this->setNumeroDocumento($fila['numeroDocumento']);
-                $this->setNombre($fila['nombre']);
-                $this->setApellido($fila['apellido']);
-                $this->setTelefono($fila['telefono']);
-                $this->setViaje($fila['idViaje']);
-
-                $respuesta = true;
+                $pasajeroEncontrado = new Pasajero(
+                        $fila['numeroDocumento'],
+                        $fila['nombre'],
+                        $fila['apellido'],
+                        $fila['telefono'],
+                        $fila['idViaje']
+                    );
+                $pasajeroEncontrado->setNumeroDocumento($numeroDoc);
+            }
+            } else {
+                throw new Exception($dataBase->getError());
             }
         } else {
-            throw new Exception("Error: la consulta no se pudo ejecutar");
+            throw new Exception($dataBase->getError());
         }
-    } else {
-        throw new Exception("Error: la base de datos no se pudo iniciar");
-    }
 
-    return $respuesta;
+        return $pasajeroEncontrado;
 }
 // Funcion para listar toda la tabla Pasajero
 // Return el arreglo con los pasajeros o null
@@ -120,23 +121,23 @@ public function buscar($numeroDoc){
             if ($dataBase->ejecutar($consulta)) {
                 $arrayPasajero = [];
                 // Mientras $row tenga valor el while sigue reiterando
-                while ($row = $dataBase->registro()) {
+                while ($fila = $dataBase->registro()) {
                     $objPasajero = new Pasajero(
-                        $row['numeroDocumento'],
-                        $row['nombre'],
-                        $row['apellido'],
-                        $row['telefono'],
-                        $row['idviaje']
+                        $fila['numeroDocumento'],
+                        $fila['nombre'],
+                        $fila['apellido'],
+                        $fila['telefono'],
+                        $fila['idviaje']
                     );
+                    $objPasajero->setNumeroDocumento($fila['numeroDocumento']);
                     $arrayPasajero[] = $objPasajero;
                 }
             } else {
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
         } else {
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+            throw new Exception($dataBase->getError());
         }
-
         return $arrayPasajero;
     }
 // Funcion para insertar un nuevo pasajero
@@ -147,16 +148,17 @@ public function buscar($numeroDoc){
         $consulta="INSERT INTO pasajero(numeroDocumento, nombre, apellido, telefono, idViaje)
                 VALUES ('".$this->getNumeroDocumento()."','".$this->getNombre()."','".$this->getApellido()."','".$this->getTelefono()."','".$this->getViaje()."')";
         if($dataBase->iniciar()){
-            if($dataBase->ejecutar($consulta)){
-                $respuesta=true;
+            $numeroDocInsertado = $dataBase->devuelveIDInsercion($consulta);
+            if ($numeroDocInsertado !== null){
+                $this->setNumeroDocumento($numeroDocInsertado);
+                $respuesta = true;
+            } else {
+                throw new Exception($dataBase->getError());
             }
-            else{
-            throw new Exception("Error: la consulta no se pudo ejecutar");
-            }
+        } else {
+            throw new Exception($dataBase->getError());
         }
-        else{
-            throw new Exception("Error: la base de datos no se pudo iniciar");
-        }
+
         return $respuesta;
     }
 // Funcion para modificar los datos de un pasajero
@@ -173,10 +175,10 @@ public function buscar($numeroDoc){
             if($dataBase->ejecutar($consulta)){
                 $respuesta=true;
             }else{
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+                throw new Exception($dataBase->getError());
             }
-        }else{
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+        } else {
+            throw new Exception($dataBase->getError());
         }
         return $respuesta;
     }
@@ -186,14 +188,14 @@ public function buscar($numeroDoc){
         $respuesta = false;
         $dataBase = new DataBase();
         if($dataBase->iniciar()){
-            $consulta="DELETE FROM persona WHERE documento=".$this->getNumeroDocumento();
-            if($dataBase->ejecutar($consulta)){
-                $respuesta=true;
-            }else{
-                throw new Exception("Error: la consulta no se pudo ejecutar");
+            $consulta="DELETE FROM pasajero WHERE numeroDocumento =".$this->getNumeroDocumento();
+            if ($dataBase->ejecutar($consulta)) {
+                $respuesta = true;
+            } else {
+                throw new Exception($dataBase->getError());
             }
-        }else{
-            throw new Exception("Error: la base de datos no se pudo iniciar");
+        } else {
+            throw new Exception($dataBase->getError());
         }
         return $respuesta;
     }

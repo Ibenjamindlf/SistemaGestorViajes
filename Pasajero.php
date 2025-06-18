@@ -127,7 +127,7 @@ public static function buscar($numeroDoc){
                         $fila['nombre'],
                         $fila['apellido'],
                         $fila['telefono'],
-                        $fila['idviaje']
+                        $fila['idViaje']
                     );
                     $objPasajero->setNumeroDocumento($fila['numeroDocumento']);
                     $arrayPasajero[] = $objPasajero;

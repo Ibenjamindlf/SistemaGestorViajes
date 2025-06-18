@@ -1,137 +1,152 @@
 <?php
-    class Viaje {
-        // Atributo estático
-        private static $idViajeStatic = 0;
+include_once 'BaseDatos.php';
 
-        // Atributo de instancia 
-        private $idViaje;
-        private $destino;
-        private $cantMaxPasajeros;
-        private $empresa;
-        private $responsable;
-        private $importe;
+    class Viaje {
+        // Atributos de instancia 
+        private int $idViaje = 0;
+        private string $destino;
+        private int $cantMaxPasajeros;
+        private int $idEmpresa;
+        private int $numResponsable;
+        private float $importe;
 
         // Constructor
-        public function __construct ($destino, $cantMaxPasajeros, $empresa, $responsable, $importe) {
-            self :: $idViajeStatic ++; // Incremento automático del ID
-            $this -> idViaje = self :: $idViajeStatic;
+        public function __construct (
+            string $destino,
+            int $cantMaxPasajeros,
+            int $idEmpresa,
+            int $numResponsable,
+            float $importe
+        ){
             $this -> destino = $destino;
             $this -> cantMaxPasajeros = $cantMaxPasajeros;
-            $this -> empresa = $empresa;
-            $this -> responsable = $responsable;
+            $this -> idEmpresa = $idEmpresa;
+            $this -> numResponsable = $numResponsable;
             $this -> importe = $importe;
         }
 
-        // Getters
-        public function getIdViaje () {
+        // GETTERS
+        public function getIdViaje(): int{
             return $this -> idViaje;
         }
 
-        public function getDestino () {
+        public function getDestino(): string{
             return $this -> destino;
         }
 
-        public function getCantMaxPasajeros () {
+        public function getCantMaxPasajeros(): int{
             return $this -> cantMaxPasajeros;
         }
 
-        public function getEmpresa () {
-            return $this -> empresa;
+        public function getIdEmpresa(): int{
+            return $this -> idEmpresa;
         }
 
-        public function getResponsable () {
-            return $this -> responsable;
+        public function getNumResponsable(): int{
+            return $this -> numResponsable;
         }
 
-        public function getImporte() {
+        public function getImporte(): float{
             return $this -> importe;
         }
 
-        // Setters
-        public function setDestino ($destino) {
-            $this -> destino = $destino;
+        // SETTERS
+        public function setIdViaje(int $idViaje): void{
+            $this->idViaje = $idViaje;
         }
 
-        public function setCantMaxPasajeros ($cantMaxPasajeros) {
-            $this -> cantMaxPasajeros = $cantMaxPasajeros;
+        public function setDestino(string $destino): void{
+            $this->destino = $destino;
         }
 
-        public function setEmpresa ($empresa) {
-            $this -> empresa = $empresa;
+        public function setCantMaxPasajeros(int $cantMaxPasajeros): void{
+            $this->cantMaxPasajeros = $cantMaxPasajeros;
         }
 
-        public function setResponsable ($responsable) {
-            $this -> responsable = $responsable;
+        public function setIdEmpresa(int $idEmpresa): void{
+            $this->idEmpresa = $idEmpresa;
         }
 
-        public function setImporte ($importe) {
-            $this -> importe = $importe;
+        public function setNumResponsable(int $numResponsable): void{
+            $this->numResponsable = $numResponsable;
         }
 
-        // A String
+        public function setImporte(float $importe): void{
+            $this->importe = $importe;
+        }
+
+        // Metodo __toString
         public function __toString () {
             $numViaje = $this -> getIdViaje ();
             $destino = $this -> getDestino ();
             $cantMaxPasajeros = $this -> getCantMaxPasajeros ();
-            $empresa = $this -> getEmpresa ();
-            $responsable = $this -> getResponsable ();
+            $idEmpresa = $this -> getIdEmpresa ();
+            $numResponsable = $this -> getNumResponsable ();
             $importe = $this->getImporte ();
 
             return
                 "------- RESPONSABLE -------".
-                "$responsable\n".
+                "$numResponsable\n".
                 "Número viaje: $numViaje\n".
                 "Destino: $destino\n".
                 "Cantidad máxima de pasajeros: $cantMaxPasajeros\n".
                 "---------- EMPRESA ----------".
-                "$empresa\n".
+                "$idEmpresa\n".
                 "Importe: $$importe";
             ;
         }
 
-        // Propias de la clase
+        // 5 funciones (buscar,listar,insertar,modificar,eliminar) -> SQL phpMyAdmin
 
         /**
-         * Funcion en revisión ❔
-         * Buscar un viaje por su ID en la base de datos
-         * @param int identificadorViaje
-         * @return boolean
-         */
-        public function buscar ($identificadorViaje) {
+         * Función para buscar viaje segun idViaje.
+         * Retorna true si la encuentra, falso caso contrario.
+         * 
+         * @param int numeroEmpleadp
+         * @return Viaje||null
+        */
+        public static function buscar (int $idViaje): ?Viaje {
             $dataBase = new DataBase ();
-            $consulta = "SELECT * FROM Viaje WHERE idViaje = '" . $identificadorViaje . "'";
-            $respuesta = false;
+            $consulta = "SELECT * FROM Viaje WHERE idViaje = '" . $idViaje . "'";
+            $viajeEncontrado = null;
 
             if ($dataBase -> iniciar ()) {
                 if ($dataBase -> ejecutar ($consulta)) {
+                    // Mientras $fila tenga valor el if se ejecuta
                     if ($fila = $dataBase -> registro ()) {
-                        $this -> setDestino ($fila["destino"]);
-                        $this -> setCantMaxPasajeros ($fila["cantMaxPasajeros"]);
-                        $this -> setEmpresa ($fila["idEmpresa"]);
-                        $this -> setResponsable ($fila["numeroEmpleado"]);
-                        $this -> setImporte ($fila["importe"]);
-                        $respuesta = true;
+                        
+                        $viajeEncontrado = new Viaje(
+                            $fila['destino'],
+                            $fila['cantMaxPasajeros'],
+                            $fila['idEmpresa'],
+                            $fila['numeroEmpleado'],
+                            $fila['importe']
+                        );
+
+                        $viajeEncontrado->setIdViaje($idViaje);
                     }
                 }
                 else {
-                    throw new Exception ("Error: la consulta no se pudo ejecutar");
+                    throw new Exception ($dataBase->getError());
                 }
             }
             else {
-                throw new Exception ("Error: la base de datos no se pudo iniciar");
+                throw new Exception ($dataBase->getError());
             }
-            return $respuesta;
+
+            return $viajeEncontrado;
         }
 
         /**
-         * Funcion en revisión ❔
-         * Listar toda la tabla Viaje
-         * @return array|null
-         */
-        public function listar ($condicion = "") {
-            $coleccionViajes = null;
+         * Función para listar toda la tabla Viaje
+         * 
+         * @param string $condicion
+         * @return array
+        */
+        public static function listar ($condicion = ""): array{
+            $arrayViaje = [];
             $dataBase = new DataBase ();
-            $consulta = "SELECT * FROM Viaje";
+            $consulta = "SELECT * FROM viaje";
 
             if ($condicion != "") {
                 $consulta .= " WHERE " . $condicion;
@@ -140,87 +155,119 @@
 
             if ($dataBase -> iniciar ()) {
                 if ($dataBase -> ejecutar ($consulta)) {
-                    $coleccionViajes = [];
-                    while ($row = $dataBase -> registro ()) {
+                    // Mientras $fila tenga valor el if se ejecuta
+                    while ($fila = $dataBase -> registro ()) {
                         $objViaje = new Viaje (
-                            $row["destino"],
-                            $row["cantMaxPasajeros"],
-                            $row["idEmpresa"],
-                            $row["numeroEmpleado"],
-                            $row["importe"]
+                            $fila["destino"],
+                            $fila["cantMaxPasajeros"],
+                            $fila["idEmpresa"],
+                            $fila["numeroEmpleado"],
+                            $fila["importe"]
                         );
-                        $coleccionViajes [] = $objViaje;
+                        $objViaje->setIdViaje($fila['idViaje']);
+
+                        $arrayViaje[] = $objViaje;
                     }
                 }
                 else {
-                    throw new Exception ("Error: la consulta no se pudo ejecutar");   
+                    throw new Exception ($dataBase->getError());   
                 }
             }
             else {
-                throw new Exception ("Error: la base de datos no se pudo iniciar");
+                throw new Exception ($dataBase->getError());
             }
-            return $coleccionViajes;
+            return $arrayViaje;
         }
 
         /**
-         * Funcion en revisión ❔
-         * Permite insertar un nuevo viaje a la tabla
-         * @return boolean
-         */
-        public function insertar () {
+         * Función para insertar registro de Viaje.
+         * Retorna true en caso de éxito
+         * 
+         * @return bool
+        */
+        public function insertar(): bool{
             $dataBase = new DataBase ();
             $respuesta = false;
-            $consulta = "INSERT INTO Viaje(destino, cantMaxPasajeros, idEmpresa, numeroEmpleado, importe)
-                VALUES ('" . $this -> getDestino () ."','". $this -> getCantMaxPasajeros () . "','" . $this -> getEmpresa () . "','" . $this -> getResponsable () . "','".$this -> getImporte () . "')";
+            $consulta =
+                "INSERT INTO viaje(destino, cantMaxPasajeros, idEmpresa, numeroEmpleado, importe)
+                VALUES ('" . $this -> getDestino () ."',". $this -> getCantMaxPasajeros () . "," . $this -> getIdEmpresa () . ", " . $this -> getNumResponsable () . ", " . $this -> getImporte () . ");"
+            ;
+
             if ($dataBase -> iniciar ()) {
-                if ($dataBase -> ejecutar ($consulta)) {
+                $idInsertado = $dataBase->devuelveIDInsercion($consulta);
+
+                if ($idInsertado !== null) {
+                    $this->setIdViaje($idInsertado);
                     $respuesta = true;
                 }
                 else {
-                    throw new Exception ("Error: la consulta no se pudo ejecutar");
+                    throw new Exception ($dataBase->getError());
                 }
             }
             else {
-                throw new Exception ("Error: la base de datos no se pudo iniciar");
+                throw new Exception ($dataBase->getError());
             }
+            
             return $respuesta;
         }
 
         /**
-         * Funcion en revisión ❔
-         * Modificar los datos de un viaje
-         * @return boolean
-         */
+         * Función para modificar datos de Responsable.
+         * Retorna true en caso de éxito
+         * 
+         * @return bool
+        */
         public function modificar () {
             $respuesta = false;
             $dataBase = new DataBase ();
-            $consulta = "UPDATE Viaje SET destino = '" . $this -> getDestino () .
-                                            "',cantMaxPasajeros = '" . $this -> getCantMaxPasajeros () .
-                                            "',idEmpresa = '" . $this -> getEmpresa () .
-                                            "',numeroEmpleado = '" . $this -> getResponsable () .
-                                            "',importe = '" . $this -> getImporte () .
-                                            "' WHERE idViaje = " . $this -> getIdViaje () . ";";
+            $consulta =
+                "UPDATE viaje 
+                SET destino = '" . $this -> getDestino () . "',
+                cantMaxPasajeros = " . $this -> getCantMaxPasajeros () . ",
+                idEmpresa = " . $this -> getIdEmpresa () .",
+                numeroEmpleado = " . $this -> getNumResponsable () . ",
+                importe = " . $this -> getImporte () . "
+                WHERE idViaje = " . $this -> getIdViaje () . ";"
+            ;
+
+            if ($dataBase->iniciar()) {
+                if ($dataBase->ejecutar($consulta)) {
+                    $respuesta = true;
+                } else {
+                    throw new Exception($dataBase->getError());
+                }
+            } else {
+                throw new Exception($dataBase->getError());
+            }
+
+            return $respuesta;
         }
 
         /**
-         * Funcion en revisión ❔
-         * Permite eliminar un viaje
-         * @return boolean
-         */
+         * Función para eliminar registro de Responsable.
+         * Retorna true en caso de éxito
+         * 
+         * @return bool
+        */
         public function eliminar () {
             $respuesta = false;
             $dataBase = new DataBase ();
+
             if ($dataBase -> iniciar ()) {
-                $consulta = "DELETE FROM Viaje WHERE idViaje = " . $this -> getIdViaje ();
+                $consulta =
+                    "DELETE FROM viaje
+                    WHERE idViaje = " . $this->getIdViaje() . ";"
+                ;
+
                 if ($dataBase -> ejecutar ($consulta)) {
                     $respuesta = true;
                 }
                 else {
-                    throw new Exception ("Error: la consulta no se pudo ejecutar");
+                    throw new Exception ($dataBase->getError());
                 }
             }
             else {
-                throw new Exception ("Error: la base de datos no se pudo iniciar");
+                throw new Exception ($dataBase->getError());
             }
             return $respuesta;
         }

@@ -24,5 +24,3 @@ Benjamin de la fuente FAI-4291
 - `revisión`: Feedback y pruebas
 - `pre-validado`: Lista preliminar
 - `validado`: Versión final confirmada
-
-probando

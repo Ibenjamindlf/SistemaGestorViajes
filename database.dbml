@@ -1,0 +1,38 @@
+Table Persona {
+  nombre varchar(150)
+  apellido varchar(150)
+  tipoDocumento varchar(10) [pk]
+  numeroDocumento int [pk]
+  telefono bigint
+}
+Table Pasajero {
+  tipoDocumento varchar(10) [pk, ref: > Persona.tipoDocumento]
+  numeroDocumento int [pk, ref: > Persona.numeroDocumento]
+  nacionalidad varchar(150)
+  necesitaAsistencia boolean
+}
+Table Responsable {
+  tipoDocumento varchar(10) [pk, ref: > Persona.tipoDocumento]
+  numeroDocumento int [pk, ref: > Persona.numeroDocumento]
+  numeroEmpleado bigint [unique]
+  legajo varchar(150) [unique]
+}
+Table Empresa {
+  idEmpresa bigint [pk, increment]
+  nombre varchar(150)
+  direccion varchar(150)
+}
+Table Viaje {
+  idViaje bigint [pk, increment]
+  destino varchar
+  cantMaxPasajeros int
+  idEmpresa bigint [ref: > Empresa.idEmpresa]
+  importe float
+  tipoDocumentoResponsable varchar [ref: > Responsable.tipoDocumento]
+  numeroDocumentoResponsable bigint [ref: > Responsable.numeroDocumento]
+}
+Table Viaje_pasajero {
+  tipoDocumentoPasajero varchar [pk, ref: > Pasajero.tipoDocumento]
+  numeroDocumentoPasajero bigint [pk, ref: > Pasajero.numeroDocumento]
+  idViaje bigint [pk, ref: > Viaje.idViaje]
+}

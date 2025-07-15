@@ -8,7 +8,7 @@ Este proyecto fue desarrollado para la materia Introduccion a la Programación O
 - Permite iniciar y cerrar la conexión a la base de datos.
 - Incluye un menú interactivo en consola para el usuario.
 - Permite realizar operaciones sobre empresas, responsables, viajes y pasajeros.
-- Todo el sistema está desarrollado con orientación a objetos (IPOO).
+- Todo el sistema está desarrollado con orientación a objetos (POO) partiendo de bases academicas.
 
 ## Informacion Integrantes:
 

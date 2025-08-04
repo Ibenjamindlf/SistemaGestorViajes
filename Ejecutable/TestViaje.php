@@ -14,6 +14,8 @@ include_once 'CodigoFuente/Utilidades/InteraccionEmpresa.php';
 include_once 'CodigoFuente/Utilidades/InteraccionViaje.php';
 include_once 'CodigoFuente/Utilidades/InteraccionViajePasajero.php';
 
+// comentario
+
 $salir = false;
 while (!$salir){
 $mostrarMenu = strtolower(trim(readline("Desea Mostrar el menu? (si/no): ")));
